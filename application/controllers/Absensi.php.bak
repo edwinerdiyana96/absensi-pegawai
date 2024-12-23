@@ -1,0 +1,152 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Absensi extends CI_controller
+{
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model('Admin_model');
+		$this->load->model('Absensi_model');
+
+		// $cek = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->num_rows();
+		// if ( $cek == 0) {
+		//     redirect('auth');
+		// }
+	}
+
+	public function rekap($params = "", $params2 = "")
+	{
+		if ($params == "filter") {
+			$data['title'] = "Rekap Absen";
+			$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+			$data['bulan'] = array(
+				'0' => 'Januari',
+				'1' => 'Februari',
+				'2' => 'Maret',
+				'3' => 'April',
+				'4' => 'Mei',
+				'5' => 'Juni',
+				'6' => 'Juli',
+				'7' => 'Agustus',
+				'8' => 'September',
+				'9' => 'Oktober',
+				'10' => 'November',
+				'11' => 'Desember',
+			);
+			
+			$data['filter'] = $this->input->post('filter');
+			$data['row_absen'] = $this->Absensi_model->getAbsensi()->result_array();
+			$data['data_pegawai'] = $this->Admin_model->getPegawai()->result_array();
+			$data['data_absensi'] = $this->Absensi_model->getAbsensiByDate($data['filter']);
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/sidebar', $data);
+			$this->load->view('templates/topbar', $data);
+			$this->load->view('rekap/index', $data);
+			$this->load->view('user/footer');
+		} else {
+			$data['title'] = "Rekap Absen";
+			$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+			$data['bulan'] = array(
+				'0' => 'Januari',
+				'1' => 'Februari',
+				'2' => 'Maret',
+				'3' => 'April',
+				'4' => 'Mei',
+				'5' => 'Juni',
+				'6' => 'Juli',
+				'7' => 'Agustus',
+				'8' => 'September',
+				'9' => 'Oktober',
+				'10' => 'November',
+				'11' => 'Desember',
+			);
+			$data['filter'] = date('Y-m-d');
+			$data['row_absen'] = $this->Absensi_model->getAbsensi()->result_array();
+			$data['data_pegawai'] = $this->Admin_model->getPegawai()->result_array();
+			$data['data_absensi'] = $this->Absensi_model->getAbsensiToday();
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/sidebar', $data);
+			$this->load->view('templates/topbar', $data);
+			$this->load->view('rekap/index', $data);
+			$this->load->view('user/footer');
+		}
+	}
+
+	public function export()
+	{
+		$this->load->view('rekap/export');
+	}
+
+	public function addTime()
+	{
+		$time_schedule = $this->input->post('time_schedule');
+		$time_start = $this->input->post('time_start');
+		$time_end = $this->input->post('time_end');
+
+		$data = [
+			'time_schedule' => $time_schedule,
+			'time_start' => $time_start,
+			'time_end' => $time_end
+		];
+		$this->Absensi_model->addnewTime($data);
+		$this->session->set_flashdata('message', '<script>
+                     swal({
+                title: "Jam Absen!",
+                text: "Jam Berhasil Ditambahkan",
+                icon: "success",
+                button: "Ok"
+                // timer: 3000
+            });
+                </script>');
+		redirect('operator/jam_absen');
+	}
+
+	public function editTime($id)
+	{
+		$data['title'] = 'Update Absensi';
+		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+		$data['jam_absen_id'] = $this->Absensi_model->getTimeId($id);
+
+		$this->load->view('templates/header', $data);
+		$this->load->view('templates/sidebar', $data);
+		$this->load->view('templates/topbar', $data);
+		$this->load->view('operator/edit-time', $data);
+		$this->load->view('templates/footer');
+	}
+
+
+	public function updateTime()
+	{
+		$this->Absensi_model->updateTime();
+		$this->session->set_flashdata('message', '<script>
+                     swal({
+                title: "Jam Absen!",
+                text: "Jam Berhasil Diperbaharui",
+                icon: "success",
+                button: "Ok"
+                // timer: 3000
+            });
+                </script>');
+		redirect('operator/jam_absen');
+	}
+
+	public function deleteTime($id)
+	{
+		$this->Absensi_model->deleteTimeAttendace($id);
+
+		$this->session->set_flashdata('message', '<script>
+                     swal({
+                title: "Jam Absen!",
+                text: "Jam Berhasil Dihapus",
+                icon: "success",
+                button: "Ok"
+                // timer: 3000
+            });
+                </script>');
+		redirect('operator/jam_absen');
+	}
+}

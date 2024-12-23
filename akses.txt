@@ -1,0 +1,20 @@
+administrator 
+	email    : admin@admin.com
+	password : adminutama
+
+
+User Pegawai 
+email : pegawai@gmail.com
+password : password
+
+Operator
+ email  :operator@gmail.com
+password : password
+
+Kepala sekolah
+ email : kepsek@gmail.com
+password :password
+
+Wakil Kepala Sekolah 
+email : wakepsek@gmail.com
+password : password 

@@ -1,0 +1,6 @@
+catatan kehadiran 
+
+0 = absen
+1 = hadir
+2 = sakit
+3 = Izin

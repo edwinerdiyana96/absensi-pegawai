@@ -1,0 +1,5 @@
+{
+    "php.suggest.basic": false,
+    "liveServer.settings.useWebExt": true,
+    "git.ignoreLimitWarning": true
+}

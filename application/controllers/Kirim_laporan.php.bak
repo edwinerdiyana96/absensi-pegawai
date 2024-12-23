@@ -1,0 +1,48 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Kirim_laporan extends CI_controller
+{
+
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->library('form_validation');
+        $this->load->model('Absensi_model');
+        $this->load->model('Admin_model');
+        $this->load->helper('cookie');
+    }
+
+
+
+    public function kirim_laporan_all()
+    {
+        $settings = $this->db->get('settings')->row_array();
+        if ($settings['metode_laporan'] == 'Telegram') {
+            redirect('telegram/sendRekapTelegram');
+        }else{
+            if ($settings['metode_laporan'] == 'Whatsapp Pribadi') {
+                redirect('Whatsapp/sendRekapWhatsapp/pribadi');
+                // echo "pribadi";
+            }else {
+                redirect('Whatsapp/sendRekapWhatsapp/group');
+            }
+        }
+    }
+
+    public function kirim_laporan_terlambat()
+    {
+        $settings = $this->db->get('settings')->row_array();
+        if ($settings['metode_laporan'] == 'Telegram') {
+            redirect('telegram/sendTerlambatTelegram');
+        }else{
+            if ($settings['metode_laporan'] == 'Whatsapp Pribadi') {
+                redirect('Whatsapp/sendTerlambatWhatsapp/pribadi');
+            }else {
+                redirect('Whatsapp/sendTerlambatWhatsapp/group');
+            }
+        }
+    }
+
+}
